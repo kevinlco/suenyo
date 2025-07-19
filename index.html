@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Puedo ser tu mono?</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffc0cb, #ff69b4);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    h1 {
+      color: white;
+      font-size: 2.8em;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .botones {
+      position: relative;
+      width: 300px;
+      height: 150px;
+    }
+
+    button {
+      position: absolute;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    #btnSi {
+      left: 0;
+      top: 0;
+      background-color: #00c853;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    #btnNo {
+      left: 160px;
+      top: 0;
+      background-color: #d50000;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+<body>
+  <h1>Anahy, ¿puedo ser tu mono? 🐒</h1>
+  <div class="botones" id="zonaBotones">
+    <button id="btnSi">Sí</button>
+    <button id="btnNo">No</button>
+  </div>
+
+  <script>
+    const btnNo = document.getElementById('btnNo');
+    const btnSi = document.getElementById('btnSi');
+    const zona = document.getElementById('zonaBotones');
+
+    const zonaMuerta = {
+      x: 120,
+      y: 80,
+      tolerancia: 20
+    };
+
+    function moverBoton() {
+      const maxX = zona.clientWidth - btnNo.clientWidth;
+      const maxY = zona.clientHeight - btnNo.clientHeight;
+      const randX = Math.floor(Math.random() * maxX);
+      const randY = Math.floor(Math.random() * maxY);
+      btnNo.style.left = `${randX}px`;
+      btnNo.style.top = `${randY}px`;
+    }
+
+    function detectarEscape(x, y) {
+      const rect = btnNo.getBoundingClientRect();
+      const distancia = Math.hypot(
+        x - (rect.left + rect.width / 2),
+        y - (rect.top + rect.height / 2)
+      );
+      if (distancia < 80) {
+        moverBoton();
+      }
+    }
+
+    document.addEventListener('mousemove', e => {
+      detectarEscape(e.clientX, e.clientY);
+    });
+
+    document.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        detectarEscape(touch.clientX, touch.clientY);
+      }
+    });
+
+    btnNo.addEventListener('click', (e) => {
+      const rect = btnNo.getBoundingClientRect();
+      const zonaRect = zona.getBoundingClientRect();
+      const x = rect.left - zonaRect.left;
+      const y = rect.top - zonaRect.top;
+
+      const cercaX = Math.abs(x - zonaMuerta.x) < zonaMuerta.tolerancia;
+      const cercaY = Math.abs(y - zonaMuerta.y) < zonaMuerta.tolerancia;
+
+      if (cercaX && cercaY) {
+        window.location.href = 'respuesta-no.html';
+      } else {
+        e.preventDefault();
+      }
+    });
+
+    btnSi.addEventListener('click', () => {
+      window.location.href = 'respuesta-si.html';
+    });
+  </script>
+</body>
+</html>
